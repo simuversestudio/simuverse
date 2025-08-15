@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semantic HTML + Canvas Starter</title>
+  <meta name="description" content="HTML5 semantic layout with responsive nav and canvas placeholders for animation and video art." />
+  <style>
+    /* CSS: 기본 스타일 및 반응형 레이아웃 */
+    /* 색상, 폰트, 여백 등은 자유롭게 변경 가능 */
+  </style>
+</head>
+<body>
+  <!-- 시각장애인용 바로가기 링크 -->
+  <a class="sr-only" href="#content">본문 바로가기</a>
+
+  <header>
+    <!-- 헤더 애니메이션용 캔버스: headerAnimate() 함수에서 그림 -->
+    <canvas id="headerCanvas" aria-hidden="true"></canvas>
+
+    <div class="wrap">
+      <!-- 사이트 상단 로고/브랜드명 -->
+      <div class="site-top">
+        <div class="brand">MY BRAND</div>
+
+        <!-- 데스크톱 내비게이션 메뉴 -->
+        <nav class="nav-row" aria-label="주요">
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#works">Works</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+
+        <!-- 모바일 메뉴 버튼 -->
+        <button class="menu-toggle" aria-expanded="false" aria-controls="mobileNav" id="menuBtn" type="button" title="메뉴 열기">
+          <!-- 햄버거 아이콘 -->
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+          <span>메뉴</span>
+        </button>
+      </div>
+
+      <!-- 모바일 내비게이션 메뉴 -->
+      <nav id="mobileNav" hidden aria-label="모바일 주요">
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#works">Works</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#blog">Blog</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- 헤더 소개 섹션 -->
+      <section class="hero" id="home">
+        <div>
+          <h1>반응형 시멘틱 템플릿 + Canvas</h1>
+          <p>header에 애니메이션용 <code>&lt;canvas&gt;</code>, 본문 section에는 비디오 아트용 <code>&lt;canvas&gt;</code>를 배치했습니다.</p>
+        </div>
+      </section>
+    </div>
+  </header>
+
+  <main id="content" class="wrap">
+    <!-- 비디오 아트용 섹션 -->
+    <section class="section" id="works" aria-labelledby="video-art-title">
+      <h2 id="video-art-title">Section: 비디오 아트 (canvas)</h2>
+      <p>여기에 비디오 프레임을 <code>drawImage()</code>로 그리거나, WebGL/Shader를 써서 처리하세요.</p>
+
+      <div class="video-canvas-wrap">
+        <!-- 비디오 소스: 개발자가 채움 -->
+        <video id="sourceVideo" playsinline muted crossorigin="anonymous" hidden></video>
+        <!-- 비디오를 캔버스에 그릴 영역 -->
+        <canvas id="videoCanvas" width="1280" height="720"></canvas>
+      </div>
+    </section>
+
+    <!-- 추가 콘텐츠 섹션: 자유롭게 내용 변경 -->
+    <section class="section" id="about">
+      <h2>About</h2>
+      <p>소개 내용.</p>
+    </section>
+
+    <section class="section" id="blog">
+      <h2>Blog</h2>
+      <p>목록/피드.</p>
+    </section>
+
+    <section class="section" id="contact">
+      <h2>Contact</h2>
+      <p>연락처.</p>
+    </section>
+  </main>
+
+  <footer>
+    <!-- 현재 연도 자동 출력 -->
+    <div class="wrap">© <span id="year"></span> Your Name. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // DOM 선택 헬퍼
+    const $ = (sel, parent=document) => parent.querySelector(sel);
+
+    // 헤더 캔버스 초기화
+    const headerCanvas = $('#headerCanvas');
+    const headerCtx = headerCanvas.getContext('2d');
+
+    // 비디오 캔버스 초기화
+    const videoCanvas = $('#videoCanvas');
+    const videoCtx = videoCanvas.getContext('2d');
+    const sourceVideo = $('#sourceVideo');
+
+    // 모바일 메뉴 토글
+    const menuBtn = $('#menuBtn');
+    const mobileNav = $('#mobileNav');
+    menuBtn.addEventListener('click', () => {
+      const open = menuBtn.getAttribute('aria-expanded') === 'true';
+      menuBtn.setAttribute('aria-expanded', String(!open));
+      mobileNav.hidden = open;
+    });
+
+    // 헤더 캔버스 리사이즈 및 애니메이션
+    function resizeHeaderCanvas(){ /* 캔버스 크기 맞춤 */ }
+    function headerAnimate(){ /* 여기에 애니메이션 로직 작성 */ }
+
+    // 비디오 캔버스 설정 및 렌더링
+    function fitVideoCanvas(){ /* 캔버스 크기 맞춤 */ }
+    function renderVideoFrame(){ /* drawImage()로 프레임 그리기 */ }
+    window.loadVideoToCanvas = function(url){ /* 비디오 로드 후 렌더링 */ }
+
+    // 푸터 연도 표시
+    $('#year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

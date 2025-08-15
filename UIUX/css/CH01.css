@@ -1,0 +1,155 @@
+/*-- CH01.css 
+
+전체 기본 스타일 
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+메뉴 스타일 
+.menu {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.menu li {
+    position: relative;
+}
+
+.menu li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    padding: 5px 10px;
+    transition: color 0.3s, transform 0.3s;
+}
+
+마우스 오버 무빙 효과 
+.menu li a:hover {
+    color: #007BFF;
+    transform: translateY(-5px);
+}
+
+밑줄 애니메이션
+.menu li a::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: #007BFF;
+    width: 0;
+    transition: width 0.3s;
+    margin-top: 5px;
+}
+
+.menu li a:hover::after {
+    width: 100%;
+}*/
+body{
+    color: blanchedalmond;
+    background-color:aquamarine;
+}
+h1{
+    font-style: italic;
+    color: black;
+}
+.menu li { 
+    list-style-type: none; 
+}
+h2{
+    color: #c00;
+}
+
+.menu li a {
+    display: block; 
+    width: 1000px;
+    height: 20px;
+    padding: 10px;
+    margin-bottom: 2px;
+    background: #abc;
+    text-indent: 10px;
+    transition: width 0.5s, color 0.5s;
+    color: #000;
+    text-decoration: none;
+}
+
+.menu li a:hover {
+    width: 450px;
+    color: #c00;
+}
+
+@keyframes sample {
+    0% {
+        background: firebrick; 
+        transform: translate(0,0);
+    }
+    25% {
+        background: rgb(63, 34, 178); 
+        transform: translate(0,0);
+    }
+    50% {
+        background: rgb(100, 216, 237);
+        transform: translate(30px,20px);
+    }
+    100% {
+        background: forestgreen;
+        transform: translate(0,0);
+    }
+}
+
+p {
+    width: 1000px;
+    height: 100px;
+    padding: 10px;
+    background: firebrick;
+    animation: sample 3s forwards infinite;
+    font-size: 500;
+}
+.ani_box{
+    position: relative;
+    width: 25px;
+    height: 25px;
+    background: url(img/Unreal01.png) no-repeat center;
+}
+
+.Unreal{
+    position: absolute;
+    left: 10px;
+    top: 9px;
+}
+
+.Unreal01{
+    animation: myany1 3s infinite;
+}
+
+.Unreal02{
+    animation: myany2 3s infinite;
+}
+
+@keyframes myany1{
+    0% {transform: scale(0.3, 0.3); opacity: 0;}
+    100% {transform: scale(1.2, 1.2); opacity: 1;}
+}
+
+@keyframes myany2{
+    0% {transform: scale(0.5, 0.5); opacity: 0;}
+    100% {transform: scale(1.4, 1.4); opacity: 1;}
+}
+.Day01{
+    width: 200px;
+    align-self:center;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}

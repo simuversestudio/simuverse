@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HTML5 시맨틱 · 비디오 3x3 그리드</title>
+
+  <style>
+    /* ===== 기본 리셋 & 레이아웃 ===== */
+    :root {
+      --maxw: 1200px;
+      --gap: 12px;        /* 카드 사이 여백 */
+      --border: 2px;      /* 비디오 카드 테두리 두께 */
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif;
+      line-height: 1.5;
+      color: #111;
+      background: #fff;
+    }
+    header, nav, main, section, footer { width: 100%; }
+    .container {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* ===== 헤더 ===== */
+    header {
+      border-bottom: 1px solid #ddd;
+      background: #fafafa;
+    }
+    header .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    header h1 {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    /* ===== 내비게이션 (메뉴 5개) ===== */
+    nav[aria-label="주요"] {
+      border-bottom: 1px solid #eee;
+      background: #fff;
+    }
+    .nav-list {
+      display: flex;
+      gap: 8px;
+      padding: 8px 0;
+      list-style: none;
+      margin: 0;
+      overflow-x: auto;
+    }
+    .nav-list a {
+      display: inline-block;
+      padding: 8px 12px;
+      text-decoration: none;
+      color: #222;
+      border: 1px solid #ddd;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .nav-list a:hover,
+    .nav-list a:focus {
+      outline: none;
+      border-color: #000;
+    }
+
+    /* ===== 메인 & 섹션 ===== */
+    main { background: #fff; }
+    section[aria-labelledby="video-grid-title"] {
+      padding-top: 12px;
+    }
+    #video-grid-title {
+      font-size: 1.1rem;
+      margin: 0 0 12px;
+    }
+
+    /* ===== 3×3 비디오 그리드 =====
+       - 정확히 3열로 고정 (요구사항)
+       - 카드마다 검정 테두리
+    */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3열 고정 */
+      gap: var(--gap);
+    }
+
+    /* 비디오 카드(검정 테두리) */
+    .video-tile {
+      position: relative;
+      border: var(--border) solid #000; /* 요청: 검정 테두리 */
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000; /* 로딩 전 배경 */
+      aspect-ratio: 16 / 9; /* 비디오 영역 비율 유지 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 실제 <video> 태그를 꽉 채우기 */
+    .video-tile video,
+    .video-tile iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* 영상 잘림 감수하고 가득 채우기 */
+      display: block;
+    }
+
+    /* 좁은 화면에서 스크롤 없이 보이게 폰트/여백만 살짝 감소 */
+    @media (max-width: 920px) {
+      .container { padding: 12px; }
+    }
+    /* 정말 좁은 화면일 때도 3열 유지 요청이므로 폰트만 더 줄임 */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1rem; }
+      #video-grid-title { font-size: 1rem; }
+    }
+
+    /* ===== 푸터 ===== */
+    footer {
+      border-top: 1px solid #eee;
+      color: #666;
+      background: #fafafa;
+    }
+    footer .container {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- 헤더 -->
+  <header>
+    <div class="container brand">
+      <h1>비디오 아트 갤러리</h1>
+      <!-- 필요 시 로고/버튼 자리 -->
+    </div>
+  </header>
+
+  <!-- 네비게이션: 메뉴 5개 -->
+  <nav aria-label="주요">
+    <div class="container">
+      <ul class="nav-list">
+        <li><a href="#home">HOME</a></li>
+        <li><a href="#works">WORKS</a></li>
+        <li><a href="#about">ABOUT</a></li>
+        <li><a href="#news">NEWS</a></li>
+        <li><a href="#contact">CONTACT</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 메인 영역 -->
+  <main>
+    <section class="container" aria-labelledby="video-grid-title">
+      <h2 id="video-grid-title">비디오 아트 (3×3)</h2>
+
+      <!-- 3×3 비디오 그리드 -->
+      <div class="video-grid" role="list">
+        <!-- 각 타일: 실제로는 src 교체 -->
+        <article class="video-tile" role="listitem" aria-label="비디오 1">
+          <!-- 예시: 로컬/호스팅 mp4 -->
+          <video src="videos/sample1.mp4" controls preload="metadata" poster="posters/sample1.jpg"></video>
+        </article>
+
+        <article class="video-tile" role="listitem" aria-label="비디오 2">
+          <video src="videos/sample2.mp4" controls preload="metadata" poster="posters/sample2.jpg"></video>
+        </article>
+
+        <article class="video-tile" role="listitem" aria-label="비디오 3">
+          <video src="videos/sample3.mp4" controls preload="metadata" poster="posters/sample3.jpg"></video>
+        </article>
+
+        <article class="video-tile" role="listitem" aria-label="비디오 4">
+          <video src="videos/sample4.mp4" controls preload="metadata" poster="posters/sample4.jpg"></video>
+        </article>
+
+        <article class="video-tile" role="listitem" aria-label="비디오 5">
+          <video src="videos/sample5.mp4" controls preload="metadata" poster="posters/sample5.jpg"></video>
+        </article>
+
+        <article class="video-tile" role="listitem" aria-label="비디오 6">
+          <video src="videos/sample6.mp4" controls preload="metadata" poster="posters/sample6.jpg"></video>
+        </article>
+
+        <article class="video-tile" role="listitem" aria-label="비디오 7">
+          <video src="videos/sample7.mp4" controls preload="metadata" poster="posters/sample7.jpg"></video>
+        </article>
+
+        <article class="video-tile" role="listitem" aria-label="비디오 8">
+          <video src="videos/sample8.mp4" controls preload="metadata" poster="posters/sample8.jpg"></video>
+        </article>
+
+        <article class="video-tile" role="listitem" aria-label="비디오 9">
+          <video src="videos/sample9.mp4" controls preload="metadata" poster="posters/sample9.jpg"></video>
+        </article>
+      </div>
+
+      <!-- 교체 가이드
+        - 위의 src/poster 경로를 실제 파일 경로로 수정하세요.
+        - 유튜브 ifrmae를 쓰고 싶다면 <video> 대신 아래와 같이:
+          <iframe
+            src="https://www.youtube.com/embed/동영상ID"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+      -->
+    </section>
+  </main>
+
+  <!-- 푸터 -->
+  <footer>
+    <div class="container">
+      © 2025 Your Name. All rights reserved. 원하는 스타일(여백/모서리/폰트 크기)을 바꾸려면 --gap, --border, border-radius, aspect-ratio 값을 조정하세요.
+유튜브/비메오 임베드가 필요하면 주석의 아이프레임 예시로 교체하면 됩니다.<iframe></iframe>
+<iframe src="" frameborder="0"></iframe>
+    </div>
+  </footer>
+</body>
+</html>

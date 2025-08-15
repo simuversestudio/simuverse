@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semantic HTML + Canvas Starter</title>
+  <meta name="description" content="HTML5 semantic layout with responsive nav and canvas placeholders for animation and video art." />
+  <style>
+    /* --- CSS Reset (lite) --- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Apple SD Gothic Neo, \"Malgun Gothic\", sans-serif; line-height: 1.5; color: #101010; background: #fff; }
+    img, video, canvas { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    :root{
+      --bg: #ffffff;
+      --fg: #111111;
+      --muted: #6b7280;
+      --brand: #2563eb;
+      --surface: #f5f7fb;
+      --ring: rgba(37,99,235,.25);
+      --radius: 20px;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#0b0d12; --fg:#f3f4f6; --surface:#121621; --muted:#94a3b8; --brand:#60a5fa; --ring: rgba(96,165,250,.25); }
+      body { background: var(--bg); color: var(--fg); }
+    }
+
+    /* --- Layout --- */
+    header {
+      position: relative;
+      isolation: isolate; /* keep header-canvas behind */
+      padding: 24px 16px; /* will be enlarged on desktop */
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 12px; }
+
+    .site-top {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      position: relative;
+      z-index: 1; /* above canvas */
+    }
+
+    .brand { font-weight: 800; letter-spacing: 0.2px; font-size: 1.25rem; }
+
+    /* --- Nav --- */
+    nav[aria-label="주요"] ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; }
+    nav[aria-label="주요"] a { padding: 10px 14px; border-radius: 999px; }
+    nav[aria-label="주요"] a:hover, nav[aria-label="주요"] a:focus-visible { outline: none; background: var(--brand); color: white; box-shadow: 0 0 0 6px var(--ring); }
+
+    /* Mobile menu */
+    .menu-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 999px; border: 1px solid rgba(0,0,0,.08); background: var(--bg); box-shadow: var(--shadow); }
+    .menu-toggle span { font-size: 0.95rem; }
+
+    .nav-row { display: none; }
+
+    /* Header intro */
+    .hero { margin-top: 22px; display: grid; gap: 20px; align-items: center; }
+    .hero h1 { font-size: clamp(1.6rem, 1.2rem + 2.2vw, 3rem); margin: 0; }
+    .hero p { margin: 0; color: var(--muted); max-width: 60ch; }
+
+    /* Header canvas sits behind */
+    #headerCanvas {
+      position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+    }
+
+    main { padding: 28px 16px 60px; }
+
+    .section {
+      position: relative; isolation: isolate; background: var(--surface); border-radius: var(--radius);
+      padding: 22px; box-shadow: var(--shadow); overflow: hidden;
+    }
+
+    .section h2 { margin-top: 0; font-size: clamp(1.2rem, 1rem + 1vw, 1.8rem); }
+    .section p { color: var(--muted); }
+
+    /* Canvas for video art */
+    .video-canvas-wrap { position: relative; border-radius: 16px; overflow: hidden; }
+    #videoCanvas { display: block; width: 100%; height: auto; }
+
+    footer { border-top: 1px solid rgba(0,0,0,.08); padding: 28px 16px; color: var(--muted); }
+
+    /* Responsive rules */
+    @media (min-width: 900px){
+      header { padding: 40px 16px 64px; }
+      .nav-row { display: block; }
+      .menu-toggle { display: none; }
+      .hero { grid-template-columns: 1.1fr 0.9fr; }
+    }
+
+    /* Hidden until needed */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#content">본문 바로가기</a>
+
+  <header>
+    <canvas id="headerCanvas" aria-hidden="true"></canvas>
+
+    <div class="wrap">
+      <div class="site-top">
+        <div class="brand">MY BRAND</div>
+
+        <!-- Desktop nav -->
+        <nav class="nav-row" aria-label="주요">
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#works">Works</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+
+        <!-- Mobile menu button -->
+        <button class="menu-toggle" aria-expanded="false" aria-controls="mobileNav" id="menuBtn" type="button" title="메뉴 열기">
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+          <span>메뉴</span>
+        </button>
+      </div>
+
+      <nav id="mobileNav" hidden aria-label="모바일 주요">
+        <ul style="list-style:none; padding:12px 0; margin:12px 0 0; display:grid; gap:8px;">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#works">Works</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#blog">Blog</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <section class="hero" id="home">
+        <div>
+          <h1>반응형 시멘틱 템플릿 + Canvas</h1>
+          <p>header에 애니메이션용 <code>&lt;canvas&gt;</code>, 본문 section에는 비디오 아트용 <code>&lt;canvas&gt;</code>를 배치했습니다. HTML/CSS/JS 뼈대만 제공하며, 로직은 자유롭게 채우세요.</p>
+        </div>
+      </section>
+    </div>
+  </header>
+
+  <main id="content" class="wrap">
+    <section class="section" id="works" aria-labelledby="video-art-title">
+      <h2 id="video-art-title">Section: 비디오 아트 (canvas)</h2>
+      <p>여기에 비디오 프레임을 <code>drawImage()</code>로 그리거나, WebGL/Shader를 써서 처리하세요.</p>
+
+      <div class="video-canvas-wrap">
+        <!-- ⚠️ 비디오 소스는 개발자가 채우세요. 예시: <source src="/video.mp4" type="video/mp4"/> -->
+        <video id="sourceVideo" playsinline muted crossorigin="anonymous" hidden></video>
+        <canvas id="videoCanvas" width="1280" height="720"></canvas>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <h2>About</h2>
+      <p>이 섹션은 내용 채우기 용. 그리드, 카드 등 자유롭게 추가.</p>
+    </section>
+
+    <section class="section" id="blog">
+      <h2>Blog</h2>
+      <p>목록/피드용 자리.</p>
+    </section>
+
+    <section class="section" id="contact">
+      <h2>Contact</h2>
+      <p>연락처/폼 자리.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">© <span id="year"></span> Your Name. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // ---- Utils ----
+    const $ = (sel, parent=document) => parent.querySelector(sel);
+    const headerCanvas = $('#headerCanvas');
+    const headerCtx = headerCanvas.getContext('2d');
+
+    const videoCanvas = $('#videoCanvas');
+    const videoCtx = videoCanvas.getContext('2d');
+    const sourceVideo = $('#sourceVideo');
+
+    // ---- Responsive Mobile Nav ----
+    const menuBtn = $('#menuBtn');
+    const mobileNav = $('#mobileNav');
+    menuBtn.addEventListener('click', () => {
+      const open = menuBtn.getAttribute('aria-expanded') === 'true';
+      menuBtn.setAttribute('aria-expanded', String(!open));
+      mobileNav.hidden = open;
+    });
+
+    // ---- Header Canvas Animation (placeholder) ----
+    function resizeHeaderCanvas(){
+      const rect = headerCanvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      headerCanvas.width = Math.floor(rect.width * dpr);
+      headerCanvas.height = Math.floor(rect.height * dpr);
+      headerCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    window.addEventListener('resize', resizeHeaderCanvas);
+    resizeHeaderCanvas();
+
+    let t = 0;
+    function headerAnimate(){
+      const { width, height } = headerCanvas;
+      // clear (logical pixels)
+      headerCtx.clearRect(0, 0, width, height);
+
+      // simple animated blobs placeholder (replace with your own)
+      const W = headerCanvas.clientWidth;
+      const H = headerCanvas.clientHeight;
+      const cx = W/2, cy = H/2;
+
+      for(let i=0; i<6; i++){
+        const r = 80 + 50*Math.sin(t*0.02 + i);
+        const x = cx + Math.cos(t*0.01 + i*0.8)*(140+i*22);
+        const y = cy + Math.sin(t*0.012 + i*0.7)*(90+i*18);
+        headerCtx.beginPath();
+        headerCtx.arc(x, y, r, 0, Math.PI*2);
+        headerCtx.fillStyle = `hsla(${(i*60 + t*0.5)%360}, 80%, 60%, 0.18)`;
+        headerCtx.fill();
+      }
+      t++;
+      requestAnimationFrame(headerAnimate);
+    }
+    requestAnimationFrame(headerAnimate);
+
+    // ---- Video Art Canvas Scaffolding ----
+    function fitVideoCanvas(){
+      // keep aspect based on current canvas size; you can modify to fill container
+      const wrap = videoCanvas.parentElement.getBoundingClientRect();
+      // Optionally scale canvas CSS size to container width
+      videoCanvas.style.width = '100%';
+    }
+    window.addEventListener('resize', fitVideoCanvas);
+    fitVideoCanvas();
+
+    // Draw video frames to canvas (you plug your own source)
+    let videoRAF;
+    function renderVideoFrame(){
+      if (sourceVideo.readyState >= 2 && !sourceVideo.paused && !sourceVideo.ended){
+        const cw = videoCanvas.width, ch = videoCanvas.height;
+        // draw center-cropped frame maintaining aspect
+        const vw = sourceVideo.videoWidth, vh = sourceVideo.videoHeight;
+        if(vw && vh){
+          const vAspect = vw/vh, cAspect = cw/ch;
+          let sx=0, sy=0, sw=vw, sh=vh;
+          if (vAspect > cAspect){
+            // video wider than canvas -> crop sides
+            const targetW = vh * cAspect;
+            sx = (vw - targetW)/2; sw = targetW;
+          } else {
+            // video taller than canvas -> crop top/bottom
+            const targetH = vw / cAspect;
+            sy = (vh - targetH)/2; sh = targetH;
+          }
+          videoCtx.drawImage(sourceVideo, sx, sy, sw, sh, 0, 0, cw, ch);
+        }
+      }
+      videoRAF = requestAnimationFrame(renderVideoFrame);
+    }
+
+    // Public helper: call this after setting a source
+    window.loadVideoToCanvas = function(url){
+      cancelAnimationFrame(videoRAF);
+      sourceVideo.src = url;
+      sourceVideo.play().catch(()=>{});
+      renderVideoFrame();
+    }
+
+    // Footer year
+    $('#year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
